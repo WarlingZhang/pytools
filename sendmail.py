@@ -2,48 +2,57 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
-# smtp = smtplib.SMTP("smtp.163.com")
-smtp = smtplib.SMTP("smtp.qiye.163.com")
+smtp = smtplib.SMTP("smtp.163.com")
+# smtp = smtplib.SMTP("smtp.qiye.163.com")
 # smtp.connect('smtp.163.com', 25)
-# sender = 'shaotian351@163.com'
-# password = 'sqm123123'
-sender = 'zwl@huazx.cn'
-password = 'Gz!@#!@#'
+sender = 'use2send@163.com'
+password = 'sqm123123'
 
 
-def sendmail(receiver, msg):
+def sendmail(receiver, subject, content):
     """
     发送邮件
-    :param receiver:
-    :param msg:
+    :param receiver: 接收人
+    :param subject: 主题
+    :param content: 邮件内容
     :return:
     """
-    smtp.login(sender, password)
-    if isinstance(msg, str):
-        content = msg
+    msg = MIMEMultipart('mixed')
+    subject = subject
+    msg['Subject'] = subject
+    msg['From'] = 'use2send <' + sender + '>'
+    if isinstance(receiver, str):
+        receivers = receiver
     else:
-        content = msg.as_string()
+        receivers = ";".join(receiver)
+    msg['To'] = receivers
+    # 构造文字内容
+    text = content
+    text_plain = MIMEText(text, 'plain', 'utf-8')
+    msg.attach(text_plain)
 
-    smtp.sendmail(sender, receiver, content)
+    smtp.login(sender, password)
+    # if isinstance(msg, str):
+    #     content = msg
+    # else:
+    #     content = msg.as_string()
+
+    smtp.sendmail(sender, receiver, msg.as_string())
     smtp.quit()
 
 
 if __name__ == '__main__':
-    # sendmail("463450693@qq.com",  "127.0.0.1")
+    # sendmail("use2send@163.com",  "127.0.0.1")
     # text = "Hi!\nHow are you?\nHere is the link you wanted:\nhttp://www.baidu.com"
     # text_plain = MIMEText(text, 'plain', 'utf-8')
-    # sendmail("463450693@qq.com",  text_plain)
+    # sendmail("use2send@163.com",  text_plain)
 
     # 构造邮件对象MIMEMultipart对象
     # 下面的主题，发件人，收件人，日期是显示在邮件页面上的。
-    msg = MIMEMultipart('mixed')
-    receiver = ["463450693@qq.com"]
-    subject= "ipchanged"
-    msg['Subject'] = subject
-    msg['From'] = 'zwl <'+sender+'>'
+
     # msg['To'] = 'XXX@126.com'
     # 收件人为多个收件人,通过join将列表转换为以;为间隔的字符串
-    msg['To'] = ";".join(receiver)
+
     # msg['Date']='2012-3-16'
 
     # 构造图片链接
@@ -65,10 +74,7 @@ if __name__ == '__main__':
     # # text_att["Content-Disposition"] = u'attachment; filename="中文附件.txt"'.decode('utf-8')
     # msg.attach(text_att)
 
-    # 构造文字内容
-    text = "Hi!\nHow are you?\nHere is the link you wanted:\nhttp://www.baidu.com"
-    text_plain = MIMEText(text, 'plain', 'utf-8')
-    msg.attach(text_plain)
-    sendmail(receiver, msg)
+
+    sendmail("use2send@163.com", "ipchanged22", "<html>你好, 送到附近速度飞快</html>")
     print("发送完成")
 
